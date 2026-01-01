@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Lessons | {{ site_name }}</title>
+    <link rel="icon" type="image/png" href="title.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: #131314;
+            color: #e3e3e3;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #1e1f20;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            border-right: 1px solid #333;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        /* Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #282a2c;
+            color: #8ab4f8;
+            border: 1px solid #444;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1100;
+            font-size: 20px;
+        }
+
+        .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 4px; margin-top: 20px; }
+        .sidebar-link {
+            padding: 12px 15px;
+            color: #e3e3e3;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .sidebar-link:hover { background: #333537; color: #8ab4f8; }
+        .sidebar-link.active { background: #3c3e41; color: #fff; }
+
+        /* Main Container - Added padding-top for mobile overlap fix */
+        .main-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            background: radial-gradient(circle at top right, rgba(138, 180, 248, 0.05), transparent);
+        }
+
+        .header-section { margin-bottom: 30px; }
+        .header-section h1 {
+            font-size: 2rem;
+            background: linear-gradient(to right, #8ab4f8, #c2e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Topic Container */
+        .topic-group {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 35px;
+            width: 100%; /* Fixes overflow */
+        }
+
+        .topic-group h2 {
+            color: #8ab4f8;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            border-left: 4px solid #8ab4f8;
+            padding-left: 15px;
+        }
+
+        /* Video Grid - Fixed responsiveness */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* Default to full width for mobile */
+            gap: 20px;
+        }
+
+        /* Desktop Grid */
+        @media (min-width: 768px) {
+            .video-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        }
+
+        /* Video Card */
+        .video-card {
+            background: #1e1f20;
+            border: 1px solid #333;
+            border-radius: 16px;
+            overflow: hidden;
+            width: 100%; /* Ensures it stays inside parent */
+        }
+
+        /* Perfect Iframe Ratio */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info { padding: 15px; }
+        .video-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .yt-btn {
+            display: block;
+            background: rgba(138, 180, 248, 0.1);
+            color: #8ab4f8;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 992px) {
+            .menu-toggle { display: block; }
+            .sidebar { position: fixed; transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-container { padding: 90px 15px 40px; } /* Increased top padding to show heading */
+            .header-section h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-toggle" id="menuBtn">☰</button>
+
+    <aside class="sidebar" id="sidebar">
+        <div style="padding-left: 15px; margin-bottom: 20px;">
+            <h2 style="color: #8ab4f8;">Exampill</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('index') }}" class="sidebar-link">🏠 Home</a>
+            <a href="{{ url_for('topics_page') }}" class="sidebar-link">📊 Topics</a>
+            <a href="#" class="sidebar-link active">📺 Videos</a>
+            <a href="{{ url_for('faq_page') }}" class="sidebar-link">❓ FAQ</a>
+            <a href="{{ url_for('form_page') }}" class="sidebar-link">📝 New Analysis</a>
+        </nav>
+    </aside>
+
+    <main class="main-container">
+        <div class="header-section">
+            <h1>Curated Lessons</h1>
+            <p style="color: #9aa0a6; font-size: 0.9rem;">Best tutorials for your syllabus.</p>
+        </div>
+
+        {% for topic in topics %}
+        <div class="topic-group">
+            <h2>{{ topic.name }}</h2>
+            <div class="video-grid">
+                {% for v in topic.videos %}
+                <div class="video-card">
+                    <div class="iframe-container">
+                        {% set video_url = v.url if v.url is defined else '' %}
+                        {% set embed_id = (video_url.split('v=')[1] if 'v=' in video_url else (video_url.split('be/')[1] if 'be/' in video_url else '')) %}
+                        {% set embed_id = embed_id.split('&')[0] if embed_id else '' %}
+                        <iframe src="https://www.youtube.com/embed/{{ embed_id }}" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">{{ v.title|default('Untitled Lecture') }}</div>
+                        <a href="{{ v.url }}" target="_blank" class="yt-btn">Open in YouTube</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </main>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+            menuBtn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                menuBtn.innerHTML = '☰';
+            }
+        });
+    </script>
+</body>
+</html>

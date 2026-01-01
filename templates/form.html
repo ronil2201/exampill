@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Analysis | Exampill</title>
+    <link rel="icon" type="image/png" href="title.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: #131314;
+            color: #e3e3e3;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background: #1e1f20;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            border-right: 1px solid #333;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        /* Toggle Button Fix */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #282a2c;
+            color: #8ab4f8;
+            border: 1px solid #444;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1100;
+            font-size: 20px;
+        }
+
+        .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 4px; margin-top: 20px; }
+        .sidebar-link {
+            padding: 12px 15px;
+            color: #e3e3e3;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .sidebar-link:hover { background: #333537; }
+        .sidebar-link.active { background: #3c3e41; color: #fff; }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            background: radial-gradient(circle at top right, rgba(138, 180, 248, 0.05), transparent);
+        }
+
+        .form-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-section { margin-bottom: 40px; }
+        .header-section h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, #8ab4f8, #c2e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        /* Form Styling */
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label {
+            display: block;
+            color: #bdc1c6;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            background: #8ab4f8;
+            color: #131314;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Responsive Fixes for Header Alignment */
+        @media (max-width: 992px) {
+            .menu-toggle { display: block; }
+            .sidebar { position: fixed; transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            
+            /* Major Fix: Increased padding-top for header visibility */
+            .main-container { padding: 100px 20px 40px; } 
+            
+            .header-section h1 { font-size: 2rem; }
+            .form-content { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-toggle" id="menuBtn">☰</button>
+
+    <aside class="sidebar" id="sidebar">
+        <div style="padding-left: 15px; margin-bottom: 20px;">
+            <h2 style="color: #8ab4f8;">Exampill</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('index') }}" class="sidebar-link">🏠 Home</a>
+            <a href="{{ url_for('topics_page') }}" class="sidebar-link">📊 Topics</a>
+            <a href="{{ url_for('faq_page') }}" class="sidebar-link">❓ FAQ</a>
+            <a href="{{ url_for('form_page') }}" class="sidebar-link active">📝 Exam Form</a>
+        </aside>
+
+    <main class="main-container">
+        <div class="form-content">
+            <div class="header-section">
+                <h1>Analyze Your Exam</h1>
+                <p style="color: #9aa0a6;">Tell us what you're studying, and our AI will handle the rest.</p>
+            </div>
+
+            <form action="{{ url_for('submit') }}" method="POST">
+                <div class="input-group">
+                    <label>Subject Name</label>
+                    <input type="text" name="subject" placeholder="e.g. Operating Systems" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Semester / Degree</label>
+                    <input type="text" name="semester" placeholder="e.g. B.Tech Semester 4" required>
+                </div>
+
+                <div class="input-group">
+                    <label>University / Board</label>
+                    <input type="text" name="university" placeholder="e.g. Mumbai University" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Exam Date</label>
+                    <input type="date" name="exam_date" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Generate AI Roadmap ✨</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+            menuBtn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                menuBtn.innerHTML = '☰';
+            }
+        });
+    </script>
+</body>
+</html>
